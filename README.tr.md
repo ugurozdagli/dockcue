@@ -1,40 +1,32 @@
 # DockCue
 
-Logitech G ASTRO A50 X için küçük, yerel çalışan Windows destek uygulaması.
+Logitech G ASTRO A50 X için bağımsız, yerel çalışan Windows destek uygulaması.
+Logitech veya ASTRO ile ilişkili değildir. Yapay zekâ desteğiyle hazırlanmıştır.
 
 [Windows sürümünü indir](https://github.com/ugurozdagli/dockcue/releases/latest) · [English](README.md)
 
-- Mikrofonu kaldırınca ve indirince farklı bildirim sesleri.
-- USB ses bağlantısını koruyarak **Voice veya Game** ile oynat/duraklat.
-- Çarpı ve küçültme düğmeleriyle sistem tepsisinde çalışmaya devam etme.
-- İsteğe bağlı Windows başlangıcı; doğrudan tepside açılır.
-- Türkçe Windows'ta Türkçe, diğer Windows dillerinde İngilizce arayüz.
-- Çalışma süresi, son etkinlikler ve küçük bir yerel log.
+- Mikrofon kolu açılırken ve kapatılırken farklı sesler.
+- USB bağlantısıyla Voice veya Game üzerinden oynat / duraklat.
+- Medya kontrolü açıkken oyun / sohbet dengesi merkezde tutulur. Diğer yöne basmak medya komutu göndermez.
+- **Oyun / sohbeti ortala** düğmesi dengeyi merkeze alır; oynat / duraklat göndermez.
+- Dengeyi serbestçe ayarlamak için medya kontrolünü kapatın.
+- Kompakt 420 × 510 arayüz. Başlangıç, dil ve son etkinlikler **Ayarlar ve günlük** altında.
+- Pil yüzdesiyle birlikte bazın son bildirdiği şarj standı durumu gösterilir.
+- Çarpı veya küçültme uygulamayı tepsiye gizler; çıkmak için tepsi menüsünden çıkışı seçin.
+- İsteğe bağlı Windows başlangıcı, otomatik Türkçe / İngilizce ve yerel günlük.
 
-**Logitech’in resmî uygulaması değildir. Logitech veya ASTRO ile bağlantılı değildir.**
-Bağımsız geliştirici destek uygulamasıdır; yapay zekâ desteği ile hazırlanmıştır.
+ZIP dosyasını yazılabilir bir klasöre çıkartıp `DockCue.exe` dosyasını açın. Medya kontrolü için G HUB açık olmalıdır.
+Tarayıcıda videoyu bir kez oynattıktan sonra seçtiğiniz tuşa kısa basın. Windows'un etkin medya oturumu kullanılır.
+G HUB'da dengeyi seçili yöne sürüklemek de medya komutu gönderebilir.
 
-## Kullanım
+Kulaklık kapalıyken veya şarjdayken bazın USB üzerinden bağlı görünmesi normaldir.
+Pil, stant ve mikrofon bilgileri bazın son raporudur; kulaklığın açık olduğunu kanıtlamaz.
 
-Release ZIP dosyasını kalıcı ve yazılabilir bir klasöre çıkarıp `DockCue.exe`
-dosyasını aç. Baz istasyonunu USB ile bağla. Medya kontrolü için G HUB arka planda
-açık kalsın. Tarayıcıdaki videoyu bir kez oynat, seçtiğin tuşa kısa bas.
+Ses kaydı, telemetri, bulut hesabı veya uzaktan erişim sunucusu yoktur. Tek ağ bağlantısı yerel G HUB'a
+`127.0.0.1:9010` üzerinden istemci bağlantısıdır. Ayarlar ve sınırlı günlük `data/` klasöründe yerel kalır;
+yayımlanan kaynak koduna veya ZIP'e eklenmez. [Gizlilik ayrıntıları](PRIVACY.md).
 
-Çarpı uygulamayı kapatmaz. Tamamen kapatmak için tepsi simgesine sağ tıkla ve
-**DockCue’dan çık** seç. **Windows ile başlat** seçeneği başlangıç kaydını yönetir.
-Ses düzeyi, dil ve tuş seçimi aynı klasörün `data/settings.json` dosyasında saklanır.
+Windows 11 ve A50 X firmware 1.3.21 ile doğrulanmıştır. Diğer A50 nesilleri için destek iddiası yoktur.
+Topluluk sürümü dijital olarak imzalanmamıştır; ZIP için `SHA256SUMS.txt` yayımlanır.
 
-Bazın USB bağlantısı kulaklık kapalıyken veya şarjdayken devam eder; bu normaldir.
-Pil bilgisi bazın önbelleğinden gelebilir. USB bağlantısı kulaklığın açık olduğunu
-kanıtlamaz; mikrofon durumu son bildirilen bilgi olarak gösterilir.
-
-Voice/Game seçimi, oyun/sohbet dengesindeki değişiklikten algılanır ve denge geri
-alınır. Bu nedenle G HUB'dan aynı yönde denge değiştirmek de medya komutu
-tetikleyebilir. Diğer taraf normal denge ayarını yapar. Özellik kapatılırsa iki
-taraf da normal işlevinde çalışır. Bluetooth tuşu yeniden atanmaz.
-
-Uygulama mikrofon sesi kaydetmez, telemetri göndermez ve uzaktan erişim sunmaz.
-Yalnızca aynı bilgisayardaki G HUB'a `127.0.0.1:9010` üzerinden bağlanır; ağda
-dinleyen bir sunucu açmaz. Loglar yereldir ve otomatik paylaşılmaz.
-
-Kurulum, sınırlamalar ve derleme bilgileri için [İngilizce README](README.md).
+Kaynak derleme, bilinen sınırlamalar ve katkı bilgileri için [İngilizce README](README.md) dosyasına bakın.
