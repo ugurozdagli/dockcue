@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1
+
+- Fix mix snapping back to an old non-centered baseline. Media mode now always returns to center.
+- Add explicit center control without sending a media key; suppress delayed HID restoration echoes.
+- Compact main window with expandable settings and activity.
+- Show last reported charging-dock / fully-charged status alongside battery percentage.
+
 ## 1.2.0
 
 First public DockCue release.
