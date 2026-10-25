@@ -79,7 +79,9 @@ class DeviceState:
 
 
 class MixController:
-    """Map a chosen mix direction to media and ignore our own restoration echo."""
+    """Keep the mix centered in media mode; suppress SET echoes and startup keys."""
+    CENTER = 6
+
     def __init__(self, restore, toggle, notify):
         self.lock = threading.RLock()
         self.restore, self.toggle, self.notify = restore, toggle, notify
@@ -93,7 +95,7 @@ class MixController:
         self.armed_at = 0
 
     def ready(self, balance, settle_seconds=0):
-        if not isinstance(balance, int) or not 0 <= balance <= 12:
+        if type(balance) is not int or not 0 <= balance <= 12:
             raise ValueError("Invalid mix range")
         with self.lock:
             self.reference, self.pending = balance, None
@@ -105,37 +107,49 @@ class MixController:
             self.available = False
             self.reference = self.pending = None
 
+    def center(self):
+        """An explicit reset never sends a media key, even with media disabled."""
+        with self.lock:
+            if not self.available:
+                return False
+            self.armed_at = max(self.armed_at, time.monotonic() + .4)
+            self.pending, self.pending_at = self.CENTER, time.monotonic()
+            self.restore(self.CENTER)
+            return True
+
     def handle(self, balance):
-        if not isinstance(balance, int) or not 0 <= balance <= 12:
+        if type(balance) is not int or not 0 <= balance <= 12:
             return
         with self.lock:
+            now = time.monotonic()
             if self.pending is not None:
                 if balance == self.pending:
                     self.reference, self.pending = balance, None
-                elif time.monotonic() - self.pending_at > 2.5:
+                    # Delayed HID packets can follow the G HUB SET acknowledgement.
+                    self.armed_at = max(self.armed_at, now + .3)
+                    self.notify("mix_centered")
+                elif now - self.pending_at > 2.5:
                     self.unavailable()
                     self.notify("restore_timeout")
                 return
-            if self.reference is None:
+            if not self.available or not self.enabled:
                 self.reference = balance
                 return
-            if time.monotonic() < self.armed_at:
+            if balance == self.CENTER:
                 self.reference = balance
                 return
-            previous = self.reference
-            if balance == previous:
+            if now < self.armed_at:
+                # Keep correcting a held button without generating repeat keys.
+                self.pending, self.pending_at = self.CENTER, now
+                self.restore(self.CENTER)
                 return
-            chosen = balance < previous if self.button == "voice" else balance > previous
-            if not (self.enabled and self.available and chosen):
-                self.reference = balance
-                return
-            self.pending, self.pending_at = previous, time.monotonic()
-            self.restore(previous)
-            if time.monotonic() - self.last_toggle >= .25:
-                self.last_toggle = time.monotonic()
+            chosen = balance < self.CENTER if self.button == "voice" else balance > self.CENTER
+            self.pending, self.pending_at = self.CENTER, now
+            self.restore(self.CENTER)
+            if chosen and now - self.last_toggle >= .35:
+                self.last_toggle = now
                 self.toggle()
                 self.notify("media_action", self.button)
 
     def needs_center(self, balance):
-        return self.enabled and ((self.button == "voice" and balance == 0) or
-                                 (self.button == "game" and balance == 12))
+        return self.enabled and balance != self.CENTER
