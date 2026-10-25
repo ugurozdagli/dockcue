@@ -4,6 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 import wave
+from unittest.mock import patch
 
 from dockcue.core import (DeviceState, MixController, choose_language,
                           clean_settings, parse_packet)
@@ -48,80 +49,114 @@ class ProtocolTests(unittest.TestCase):
 
 
 class MediaTests(unittest.TestCase):
+    def setUp(self):
+        self.clock = 100.0
+        self.timer = patch("dockcue.core.time.monotonic", side_effect=lambda: self.clock)
+        self.timer.start()
+        self.addCleanup(self.timer.stop)
+
     def controller(self, button="voice", balance=6):
-        self.restores, self.toggles = [], []
-        c = MixController(self.restores.append, lambda: self.toggles.append(1), lambda *args: None)
+        self.restores, self.toggles, self.notices = [], [], []
+        c = MixController(self.restores.append, lambda: self.toggles.append(1),
+                          lambda *args: self.notices.append(args))
         c.button = button
         c.ready(balance)
         return c
 
-    def test_voice_once_and_restore_echo_no_double_toggle(self):
+    def test_voice_once_and_delayed_restoration_echo_no_double_toggle(self):
         c = self.controller()
         c.handle(5)
         c.handle(5)
         c.handle(6)
+        c.handle(5)  # late HID packet after G HUB acknowledgement
         c.handle(6)
-        self.assertEqual(self.restores, [6])
         self.assertEqual(self.toggles, [1])
         self.assertIsNone(c.pending)
-        c.last_toggle = -1e9
+        self.clock += .5
         c.handle(5)
         self.assertEqual(self.toggles, [1, 1])
+        self.assertTrue(all(x == 6 for x in self.restores))
 
-    def test_game_selected_maps_only_increase(self):
+    def test_game_selected_maps_only_game_and_both_sides_center(self):
         c = self.controller("game")
         c.handle(5)
         self.assertEqual(self.toggles, [])
+        self.assertEqual(self.restores, [6])
         c.handle(6)
-        self.assertEqual(self.restores, [5])
+        self.clock += .5
+        c.handle(7)
+        self.assertEqual(self.restores, [6, 6])
         self.assertEqual(self.toggles, [1])
 
-    def test_voice_preserves_custom_mix(self):
-        c = self.controller(balance=8)
-        c.handle(7)
-        self.assertEqual(self.restores, [8])
+    def test_center_never_preserves_old_custom_mix_or_sends_media(self):
+        for balance in (0, 3, 8, 12):
+            c = self.controller(balance=balance)
+            self.assertTrue(c.center())
+            c.handle(6)
+            self.assertEqual(self.restores, [6])
+            self.assertEqual(self.toggles, [])
+            self.assertEqual(c.reference, 6)
 
-    def test_non_selected_button_keeps_its_original_mix_function(self):
-        c = self.controller()
-        c.handle(7)
-        self.assertEqual(self.toggles, [])
+    def test_manual_move_to_center_does_not_restore_old_position(self):
+        c = self.controller(balance=12)
         c.handle(6)
-        self.assertEqual(self.restores, [7])
+        self.assertEqual(self.restores, [])
+        self.assertEqual(self.toggles, [])
+        self.assertEqual(c.reference, 6)
 
-    def test_disabled_and_disconnected_modes_never_send_media(self):
+    def test_disabled_media_allows_mix_and_manual_center_still_works(self):
         c = self.controller()
         c.enabled = False
-        c.handle(5)
-        c.enabled = True
-        c.unavailable()
-        c.handle(4)
-        c.handle(3)
+        c.handle(12)
+        self.assertEqual(self.restores, [])
+        c.center()
+        c.handle(6)
+        self.assertEqual(self.restores, [6])
         self.assertEqual(self.toggles, [])
 
-    def test_selected_direction_at_boundary_needs_center(self):
-        c = self.controller("voice")
-        self.assertTrue(c.needs_center(0))
+    def test_disconnected_mode_cannot_send_media_or_center(self):
+        c = self.controller()
+        c.unavailable()
+        self.assertFalse(c.center())
+        c.handle(5)
+        c.handle(4)
+        self.assertEqual(self.restores, [])
+        self.assertEqual(self.toggles, [])
+
+    def test_enabled_mode_centers_every_non_center_position(self):
+        c = self.controller()
+        for balance in range(13):
+            self.assertEqual(c.needs_center(balance), balance != 6)
+        c.enabled = False
         self.assertFalse(c.needs_center(12))
-        c.button = "game"
-        self.assertTrue(c.needs_center(12))
-        self.assertFalse(c.needs_center(0))
 
     def test_invalid_balance_is_rejected(self):
         c = self.controller()
-        c.handle(99)
+        for value in (-1, 99, True, "6"):
+            c.handle(value)
+            with self.assertRaises(ValueError):
+                c.ready(value)
         self.assertEqual(self.toggles, [])
-        with self.assertRaises(ValueError):
-            c.ready(-1)
 
-    def test_startup_baseline_settles_without_playback_commands(self):
-        c = self.controller()
-        c.ready(6, settle_seconds=1)
-        c.handle(5)
+    def test_startup_baseline_correction_does_not_send_playback_commands(self):
+        c = self.controller(balance=12)
+        c.ready(12, settle_seconds=.75)
+        c.center()
+        c.handle(12)
         c.handle(6)
         self.assertEqual(self.toggles, [])
-        c.armed_at = 0
+        self.clock += 1
         c.handle(5)
         self.assertEqual(self.toggles, [1])
+
+    def test_failed_restore_disables_control_until_reconnect(self):
+        c = self.controller()
+        c.center()
+        self.clock += 3
+        c.handle(12)
+        self.assertFalse(c.available)
+        self.assertIn(("restore_timeout",), self.notices)
+        self.assertEqual(self.toggles, [])
 
 
 class SettingsAndPrivacyTests(unittest.TestCase):
