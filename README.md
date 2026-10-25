@@ -7,18 +7,24 @@
 DockCue adds distinct sounds when you flip the microphone open or muted, and lets
 you use either **Voice** or **Game** as a play/pause button while keeping your USB
 audio connection. It stays in the system tray and shows that the app is running,
-the base's USB connection, battery information, and recent local activity.
+the base's USB connection, battery information, and recent local activity. Battery status includes the last reported charging-dock state.
 
 > This is an independent community support application. It is not an official
 > Logitech application and is not affiliated with Logitech or ASTRO.
 > Created with AI assistance; changes are reviewed and tested before release.
 
-![DockCue English interface](assets/screenshot-en.png)
+<details><summary>Earlier interface (1.2.0)</summary>
+
+![DockCue 1.2.0 English interface](assets/screenshot-en.png)
+
+</details>
+
+Version 1.2.1 uses a compact 420 x 510 window; startup, language and activity are under **Settings & log**.
 
 ## Features
 
 - Different microphone-open and microphone-muted cues, with adjustable volume.
-- Choose **Voice** or **Game** for Windows play/pause. The previous mix is restored.
+- Choose **Voice** or **Game** for Windows play/pause. The mix returns to center.
 - Close or minimize the window to keep running in the tray. Use **Quit DockCue** to exit.
 - Optional **Start with Windows**, launching directly in the tray.
 - English on non-Turkish Windows; Turkish on Turkish Windows. Manual language selection is available.
@@ -52,14 +58,16 @@ The app retries device/G HUB connections. If a worker fails, it is logged and re
 
 ## Media-button behavior and limits
 
-DockCue observes changes to the Game/Voice mix. With **Voice** selected, a decrease
-is treated as play/pause; with **Game** selected, an increase is treated as play/pause.
-The mix is then restored. The other side continues to adjust the mix normally.
+While media control is enabled, DockCue keeps the Game/Voice mix centered (6 of 12).
+Press **Voice** or **Game**, whichever you selected, to send play/pause. Both directions
+return to center; the other direction sends no media command. **Center game / voice**
+resets the mix without sending play/pause, including when media control is disabled.
 
-- Changing the mix in G HUB or another application can also trigger media when it moves in the selected direction.
-- At the selected direction's end-stop, enabling the feature may center the mix once so future presses are detectable.
-- Use short presses. Disable media control to restore ordinary Game/Voice behavior.
+- Disable media control to adjust the mix freely in G HUB or with the headset.
+- Changing the mix in G HUB can also trigger media when it moves in the selected direction.
+- Use short presses. Startup, explicit centering and delayed restoration echoes do not send media keys.
 - The Bluetooth button did not emit USB events in the tested setup and is not remapped.
+- Charging-dock status is the base's last report; it does not establish the headset's power/radio state.
 
 ## Local files and privacy
 
