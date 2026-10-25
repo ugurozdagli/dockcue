@@ -1,0 +1,25 @@
+[project]
+name = "dockcue"
+version = "1.2.0"
+description = "A local-only Windows companion for the ASTRO A50 X"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "DockCue contributors"}]
+classifiers = ["Operating System :: Microsoft :: Windows", "Programming Language :: Python :: 3"]
+dynamic = ["dependencies"]
+
+[project.urls]
+Homepage = "https://github.com/ugurozdagli/dockcue"
+Issues = "https://github.com/ugurozdagli/dockcue/issues"
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+include = ["dockcue*"]
+

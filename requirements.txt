@@ -1,0 +1,5 @@
+hidapi==0.15.0
+websocket-client==1.9.2
+customtkinter==6.0.0
+pystray==0.19.5
+Pillow==13.0.0
