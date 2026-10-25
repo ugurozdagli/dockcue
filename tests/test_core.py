@@ -113,6 +113,16 @@ class MediaTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             c.ready(-1)
 
+    def test_startup_baseline_settles_without_playback_commands(self):
+        c = self.controller()
+        c.ready(6, settle_seconds=1)
+        c.handle(5)
+        c.handle(6)
+        self.assertEqual(self.toggles, [])
+        c.armed_at = 0
+        c.handle(5)
+        self.assertEqual(self.toggles, [1])
+
 
 class SettingsAndPrivacyTests(unittest.TestCase):
     def test_language_defaults_to_english_for_every_non_turkish_os(self):
