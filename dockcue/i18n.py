@@ -1,6 +1,11 @@
 """English fallback and Turkish UI text."""
 TEXT = {
 "en": {
+ "media_short":"Media control", "center_mix":"Center game / voice", "mix_locked":"Media on · mix always returns to center", "mix_free":"Media off · mix can be adjusted freely",
+ "battery_charging":"On charging dock · last reported", "battery_full":"Fully charged · on dock (last reported)", "battery_undocked":"Off charging dock · last reported",
+ "settings":"Settings & log", "less":"Fewer details", "legal_short":"Independent companion · not affiliated with Logitech / ASTRO",
+ "footer_short":"AI-assisted · no recording or telemetry", "evt_centered":"Game / voice mix centered",
+
  "subtitle":"An independent A50 X companion", "alive":"Running", "base_yes":"Base connected by USB", "base_no":"Waiting for USB base",
  "mic_on":"Microphone open", "mic_off":"Microphone muted", "mic_wait":"Microphone status pending", "docked":"Docked / charging", "last_mic":"Last reported microphone state",
  "battery":"Battery", "battery_unknown":"Battery not available", "battery_note":"Reported by the base; may be cached when the headset is off.",
@@ -14,6 +19,11 @@ TEXT = {
  "uptime":"Uptime", "log_note":"Only local app events; no audio or device identifiers.", "startup_error":"Could not update Windows startup.", "error_title":"DockCue", "tray_error":"Tray unavailable; keeping the window open.",
 },
 "tr": {
+ "media_short":"Medya kontrolü", "center_mix":"Oyun / sohbeti ortala", "mix_locked":"Medya açık · denge her zaman merkeze döner", "mix_free":"Medya kapalı · denge serbestçe ayarlanır",
+ "battery_charging":"Şarj standında · son bildirim", "battery_full":"Şarj dolu · standında (son bildirim)", "battery_undocked":"Şarj standı dışında · son bildirim",
+ "settings":"Ayarlar ve günlük", "less":"Ayrıntıları gizle", "legal_short":"Bağımsız destek uygulaması · Logitech / ASTRO ile ilişkili değil",
+ "footer_short":"Yapay zekâ desteğiyle hazırlandı · ses kaydı / telemetri yok", "evt_centered":"Oyun / sohbet dengesi ortalandı",
+
  "subtitle":"Bağımsız A50 X destek uygulaması", "alive":"Çalışıyor", "base_yes":"Baz USB üzerinden bağlı", "base_no":"USB baz istasyonu bekleniyor",
  "mic_on":"Mikrofon açık", "mic_off":"Mikrofon kapalı", "mic_wait":"Mikrofon durumu bekleniyor", "docked":"Standında / şarj oluyor", "last_mic":"Son bildirilen mikrofon durumu",
  "battery":"Pil", "battery_unknown":"Pil bilgisi alınamadı", "battery_note":"Bazın bildirdiği değer; kulaklık kapalıyken önbellekten gelebilir.",
