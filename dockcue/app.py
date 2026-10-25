@@ -97,117 +97,138 @@ class App:
     def build_ui(self):
         r = self.root
         r.title("DockCue")
-        r.geometry("500x782")
+        self.details_open = getattr(self, "details_open", False)
+        r.geometry("420x" + ("640" if self.details_open else "510"))
         r.resizable(False, False)
-        r.configure(fg_color="#0c1118")
+        r.configure(fg_color="#0d121a")
         if hasattr(self, "frame"):
             self.frame.destroy()
-        bg, card, muted, accent = "#0c1118", "#171f2a", "#8fa0b5", "#20d3e6"
+        card, muted, accent = "#18212d", "#99abc1", "#31d0dc"
         self.frame = f = ctk.CTkFrame(r, fg_color="transparent")
-        f.pack(fill="both", expand=True, padx=24, pady=20)
+        f.pack(fill="both", expand=True, padx=18, pady=14)
 
         def label(parent, value, size=12, color="#eef3fa", **kwargs):
             return ctk.CTkLabel(parent, text=value, font=("Segoe UI", size),
-                                text_color=color, anchor="w", **kwargs)
+                                text_color=color, anchor="w", height=22, **kwargs)
+
+        def panel():
+            box = ctk.CTkFrame(f, fg_color=card, corner_radius=12)
+            box.pack(fill="x", pady=(0, 8))
+            box.grid_columnconfigure(0, weight=1)
+            return box
 
         def switch(parent, variable, command):
-            return ctk.CTkSwitch(parent, text="", variable=variable, width=42,
-                                  switch_width=40, switch_height=22,
-                                  progress_color=accent, command=command)
+            return ctk.CTkSwitch(parent, text="", variable=variable, width=38,
+                                switch_width=36, switch_height=20,
+                                progress_color=accent, command=command)
 
         header = ctk.CTkFrame(f, fg_color="transparent")
-        header.pack(fill="x", pady=(0, 13))
-        label(header, "DockCue", 27).grid(row=0, column=0, sticky="w")
-        self.alive_label = label(header, "● " + self.t("alive"), 11, "#72dcb9")
-        self.alive_label.grid(row=0, column=1, sticky="e")
+        header.pack(fill="x", pady=(0, 10))
         header.grid_columnconfigure(0, weight=1)
-        label(header, "Logitech G Astro A50 X", 12, muted).grid(row=1, column=0, columnspan=2, sticky="w")
-        status = ctk.CTkFrame(f, fg_color=card, corner_radius=15)
-        status.pack(fill="x", pady=(0, 10))
-        status.grid_columnconfigure(0, weight=1)
-        self.base_label = label(status, self.t("base_no"), 14)
-        self.base_label.grid(row=0, column=0, sticky="w", padx=16, pady=(12, 0))
-        self.battery_label = label(status, "—", 13, accent)
-        self.battery_label.grid(row=0, column=1, padx=16, pady=(12, 0))
+        label(header, "DockCue", 24).grid(row=0, column=0, sticky="w")
+        self.alive_label = label(header, "● " + self.t("alive"), 11, "#79d9b1")
+        self.alive_label.grid(row=0, column=1, sticky="e")
+        label(header, "Logitech G ASTRO A50 X", 11, muted).grid(row=1, column=0, sticky="w")
+        label(header, "v" + __version__, 10, muted).grid(row=1, column=1, sticky="e")
+
+        status = panel()
+        self.base_label = label(status, self.t("base_no"), 12)
+        self.base_label.grid(row=0, column=0, sticky="w", padx=12, pady=(8, 0))
+        self.battery_label = label(status, "—", 14, accent)
+        self.battery_label.grid(row=0, column=1, sticky="e", padx=12, pady=(8, 0))
         self.mic_label = label(status, self.t("mic_wait"), 11, muted)
-        self.mic_label.grid(row=1, column=0, columnspan=2, sticky="w", padx=16)
-        self.battery_note = label(status, self.t("battery_note"), 10, "#72859c", wraplength=410)
-        self.battery_note.grid(row=2, column=0, columnspan=2, sticky="w", padx=16, pady=(1, 11))
-        audio = ctk.CTkFrame(f, fg_color=card, corner_radius=15)
-        audio.pack(fill="x", pady=(0, 10))
-        audio.grid_columnconfigure(0, weight=1)
-        label(audio, self.t("sounds"), 14).grid(row=0, column=0, sticky="w", padx=16, pady=(12, 0))
-        label(audio, self.t("sounds_sub"), 11, muted).grid(row=1, column=0, sticky="w", padx=16)
+        self.mic_label.grid(row=1, column=0, columnspan=2, sticky="w", padx=12)
+        self.battery_status_label = label(status, "", 11, muted)
+        self.battery_status_label.grid(row=2, column=0, columnspan=2, sticky="w", padx=12, pady=(0, 7))
+
+        audio = panel()
+        label(audio, self.t("sounds"), 13).grid(row=0, column=0, sticky="w", padx=12, pady=(7, 0))
         self.sound_var = tk.BooleanVar(value=self.settings["sound"])
-        switch(audio, self.sound_var, self.toggle_sound).grid(row=0, column=1, rowspan=2, padx=16)
+        switch(audio, self.sound_var, self.toggle_sound).grid(row=0, column=1, padx=12, pady=(7, 0))
         row = ctk.CTkFrame(audio, fg_color="transparent")
-        row.grid(row=2, column=0, columnspan=2, sticky="ew", padx=16, pady=(10, 12))
-        self.volume_label = label(row, f'{round(self.settings["volume"] * 100)}%', 11, muted, width=38)
+        row.grid(row=1, column=0, columnspan=2, sticky="ew", padx=12, pady=(6, 9))
+        self.volume_label = label(row, f'{round(self.settings["volume"] * 100)}%', 10, muted, width=32)
         self.volume_label.pack(side="left")
-        slider = ctk.CTkSlider(row, from_=2, to=40, number_of_steps=38, height=16,
+        slider = ctk.CTkSlider(row, from_=2, to=40, number_of_steps=38, height=14,
                               progress_color=accent, button_color=accent, command=self.change_volume)
         slider.set(round(self.settings["volume"] * 100))
-        slider.pack(side="left", fill="x", expand=True, padx=(5, 12))
-        ctk.CTkButton(row, text=self.t("preview"), width=66, height=27, corner_radius=7,
-                      fg_color="#29384a", hover_color="#354b62", font=("Segoe UI", 11),
-                      command=self.demo_sounds).pack(side="right")
-        media = ctk.CTkFrame(f, fg_color=card, corner_radius=15)
-        media.pack(fill="x", pady=(0, 12))
-        media.grid_columnconfigure(0, weight=1)
-        label(media, self.t("media"), 14).grid(row=0, column=0, sticky="w", padx=16, pady=(12, 0))
-        self.media_label = label(media, "", 11, muted)
-        self.media_label.grid(row=1, column=0, sticky="w", padx=16)
+        slider.pack(side="left", fill="x", expand=True, padx=(4, 10))
+        ctk.CTkButton(row, text=self.t("preview"), width=58, height=25,
+                      fg_color="#29394d", font=("Segoe UI", 11), command=self.demo_sounds).pack(side="right")
+
+        media = panel()
+        label(media, self.t("media_short"), 13).grid(row=0, column=0, sticky="w", padx=12, pady=(8, 0))
         self.media_var = tk.BooleanVar(value=self.controller.enabled)
-        switch(media, self.media_var, self.toggle_media).grid(row=0, column=1, rowspan=2, padx=16)
-        label(media, self.t("button"), 11, muted).grid(row=2, column=0, sticky="w", padx=16, pady=(8, 12))
-        self.button_menu = ctk.CTkSegmentedButton(media, values=["Voice", "Game"], width=150,
-                                                 selected_color="#176c7c", selected_hover_color="#228c9e",
+        switch(media, self.media_var, self.toggle_media).grid(row=0, column=1, padx=12, pady=(8, 0))
+        self.media_label = label(media, "", 10, muted)
+        self.media_label.grid(row=1, column=0, columnspan=2, sticky="w", padx=12)
+        controls = ctk.CTkFrame(media, fg_color="transparent")
+        controls.grid(row=2, column=0, columnspan=2, sticky="ew", padx=12, pady=(4, 4))
+        self.button_menu = ctk.CTkSegmentedButton(controls, values=["Voice", "Game"], height=29,
+                                                 selected_color="#146c79", selected_hover_color="#228c9e",
                                                  command=self.change_button, font=("Segoe UI", 11))
         self.button_menu.set(self.settings["button"].title())
-        self.button_menu.grid(row=2, column=1, sticky="e", padx=16, pady=(8, 12))
-        prefs = ctk.CTkFrame(f, fg_color="transparent")
-        prefs.pack(fill="x", pady=(0, 10))
+        self.button_menu.pack(side="left")
+        self.center_button = ctk.CTkButton(controls, text=self.t("center_mix"), width=150, height=29,
+                                          fg_color="#29394d", font=("Segoe UI", 11), command=self.center_mix)
+        self.center_button.pack(side="right")
+        self.mix_hint = label(media, "", 10, muted)
+        self.mix_hint.grid(row=3, column=0, columnspan=2, sticky="w", padx=12, pady=(0, 7))
+
+        self.details_frame = ctk.CTkFrame(f, fg_color=card, corner_radius=12)
+        prefs = ctk.CTkFrame(self.details_frame, fg_color="transparent")
+        prefs.pack(fill="x", padx=12, pady=(10, 4))
         self.startup_var = tk.BooleanVar(value=startup_enabled())
         ctk.CTkCheckBox(prefs, text=self.t("startup"), variable=self.startup_var,
-                        checkbox_width=18, checkbox_height=18, border_width=2,
+                        checkbox_width=16, checkbox_height=16, border_width=2,
                         fg_color=accent, text_color="#bfcedd", font=("Segoe UI", 11),
                         command=self.toggle_startup).pack(side="left")
-        language_values = [self.t("system"), "English", "Türkçe"]
-        menu = ctk.CTkOptionMenu(prefs, values=language_values, width=143, height=29,
-                                 fg_color="#202d3c", button_color="#2a3a4e",
-                                 font=("Segoe UI", 11), command=self.change_language)
+        menu = ctk.CTkOptionMenu(prefs, values=[self.t("system"), "English", "Türkçe"], width=137, height=27,
+                                 fg_color="#26364a", button_color="#30435c", font=("Segoe UI", 10),
+                                 command=self.change_language)
         menu.set({"auto": self.t("system"), "en": "English", "tr": "Türkçe"}[self.settings["language"]])
         menu.pack(side="right")
-        activity = ctk.CTkFrame(f, fg_color=card, corner_radius=12)
-        activity.pack(fill="x", pady=(0, 10))
-        heading = ctk.CTkFrame(activity, fg_color="transparent")
-        heading.pack(fill="x", padx=14, pady=(7, 0))
+        heading = ctk.CTkFrame(self.details_frame, fg_color="transparent")
+        heading.pack(fill="x", padx=12)
         self.uptime_label = label(heading, "", 10, muted)
         self.uptime_label.pack(side="left")
-        ctk.CTkButton(heading, text=self.t("logs"), width=105, height=23, font=("Segoe UI", 10),
-                      fg_color="transparent", hover_color="#28384c", command=self.open_log).pack(side="right")
+        ctk.CTkButton(heading, text=self.t("logs"), width=100, height=24, font=("Segoe UI", 10),
+                      fg_color="transparent", command=self.open_log).pack(side="right")
         self.activity_labels = []
         for _ in range(2):
-            line = label(activity, "", 10, "#a9bbce", height=19)
-            line.pack(fill="x", padx=14)
+            line = label(self.details_frame, "", 10, muted)
+            line.pack(fill="x", padx=12)
             self.activity_labels.append(line)
-        footer = ctk.CTkFrame(f, fg_color="transparent")
-        footer.pack(fill="x")
-        label(footer, self.t("privacy"), 10, "#72c8b1").pack(fill="x")
-        label(footer, self.t("unofficial") + " " + self.t("independent"), 10, muted, wraplength=450).pack(fill="x")
-        label(footer, self.t("ai"), 10, muted).pack(fill="x")
+        if self.details_open:
+            self.details_frame.pack(fill="x", pady=(0, 8))
+
         bottom = ctk.CTkFrame(f, fg_color="transparent")
-        bottom.pack(side="bottom", fill="x", pady=(8, 0))
-        label(bottom, "v" + __version__, 10, "#61768f").pack(side="left")
-        ctk.CTkButton(bottom, text=self.t("hide"), width=130, height=30, corner_radius=8,
-                      fg_color="#203246", hover_color="#2b4861", font=("Segoe UI", 11),
-                      command=self.hide_to_tray).pack(side="right")
+        bottom.pack(fill="x", pady=(3, 8))
+        self.details_button = ctk.CTkButton(bottom, text=self.t("less" if self.details_open else "settings"),
+                                           width=110, height=29, fg_color="transparent", hover_color="#202e40",
+                                           anchor="w", font=("Segoe UI", 11), command=self.toggle_details)
+        self.details_button.pack(side="left")
+        ctk.CTkButton(bottom, text=self.t("hide"), width=115, height=29,
+                      fg_color="#203246", font=("Segoe UI", 11), command=self.hide_to_tray).pack(side="right")
+        self.footer = ctk.CTkFrame(f, fg_color="transparent")
+        self.footer.pack(fill="x")
+        label(self.footer, self.t("legal_short"), 10, muted).pack(fill="x")
+        label(self.footer, self.t("footer_short"), 10, "#76baa9").pack(fill="x")
         icon_file = Path(getattr(sys, "_MEIPASS", application_folder())) / "assets" / "dockcue.ico"
         if icon_file.exists():
             r.iconbitmap(default=str(icon_file))
         self.update_state()
         self.update_media_label()
         self.update_history()
+
+    def toggle_details(self):
+        self.details_open = not self.details_open
+        if self.details_open:
+            self.details_frame.pack(fill="x", pady=(0, 8), before=self.details_button.master)
+        else:
+            self.details_frame.pack_forget()
+        self.details_button.configure(text=self.t("less" if self.details_open else "settings"))
+        self.root.geometry("420x" + ("640" if self.details_open else "510"))
 
     def update_history(self):
         rows = list(self.history)
@@ -225,11 +246,21 @@ class App:
         else:
             line = self.t("last_mic") + ": " + self.t("mic_on" if self.state.mic_open else "mic_off")
         self.mic_label.configure(text=line)
-        self.battery_label.configure(text=f"{self.state.battery}%" if self.state.battery_is_fresh() else "—")
+        fresh = self.state.battery_is_fresh()
+        self.battery_label.configure(text=f'{self.t("battery")} {self.state.battery}%' if fresh else "—")
+        if not fresh:
+            battery_status = self.t("battery_unknown")
+        elif self.state.docked:
+            battery_status = self.t("battery_full" if self.state.battery == 100 else "battery_charging")
+        else:
+            battery_status = self.t("battery_undocked")
+        self.battery_status_label.configure(text=battery_status)
 
     def update_media_label(self):
         key = "media_off" if not self.controller.enabled else ("media_ready" if self.media_ready else "media_wait")
-        self.media_label.configure(text=self.t(key), text_color="#8fa0b5")
+        self.media_label.configure(text=self.t(key), text_color="#99abc1")
+        self.center_button.configure(state="normal" if self.media_ready else "disabled")
+        self.mix_hint.configure(text=self.t("mix_locked" if self.controller.enabled else "mix_free"))
 
     def change_language(self, value):
         self.settings["language"] = {"English": "en", "Türkçe": "tr"}.get(value, "auto")
@@ -268,6 +299,12 @@ class App:
         self.persist()
         if self.tray:
             self.tray.update_menu()
+
+    def center_mix(self):
+        if self.media_ready:
+            self.commands.put(("center", None))
+        else:
+            self.media_label.configure(text=self.t("media_wait"))
 
     def change_button(self, value):
         value = value.lower()
@@ -430,12 +467,9 @@ class App:
                 path = f'/audio/{dev["id"]}/centurion_mix'
                 def initialize():
                     balance = ghub_request(ws, path).get("balance", 0)
-                    if self.controller.needs_center(balance):
-                        balance = 6
-                        ghub_request(ws, path, "SET", {"balance": balance})
-                    # Initial G HUB/HID replies can arrive out of order. Let
-                    # their baseline settle without emitting a media key.
                     self.controller.ready(balance, settle_seconds=.75)
+                    if self.controller.needs_center(balance):
+                        self.controller.center()
                 initialize()
                 if reported is not True:
                     self.emit("ghub_ready")
@@ -450,11 +484,16 @@ class App:
                         restored = ghub_request(ws, path, "SET", {"balance": value})
                         if restored.get("balance", 0) != value:
                             raise RuntimeError("Mix restoration was not acknowledged")
-                        self.controller.handle(value)
+                        actual = ghub_request(ws, path).get("balance", 0)
+                        if actual != value:
+                            raise RuntimeError("Mix did not reach the requested position")
+                        self.controller.handle(actual)
+                    elif command == "center":
+                        self.controller.center()
                     elif command == "refresh":
                         initialize()
                     if time.monotonic() >= health:
-                        ghub_request(ws, path)
+                        self.controller.handle(ghub_request(ws, path).get("balance", 0))
                         health = time.monotonic() + 5
             except Exception as error:
                 self.controller.unavailable()
@@ -516,6 +555,10 @@ class App:
                 self.media_ready = False
                 self.note("evt_ghub_no")
                 self.update_media_label()
+            elif kind == "mix_centered":
+                if time.monotonic() - self.last_noted.get("evt_centered", 0) > 2:
+                    self.note("evt_centered")
+                    self.last_noted["evt_centered"] = time.monotonic()
             elif kind == "media_action":
                 self.note("evt_media")
                 self.media_label.configure(text=self.t("media_action"), text_color="#72dcb9")
