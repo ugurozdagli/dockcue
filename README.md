@@ -13,6 +13,8 @@ the base's USB connection, battery information, and recent local activity.
 > Logitech application and is not affiliated with Logitech or ASTRO.
 > Created with AI assistance; changes are reviewed and tested before release.
 
+![DockCue English interface](assets/screenshot-en.png)
+
 ## Features
 
 - Different microphone-open and microphone-muted cues, with adjustable volume.
