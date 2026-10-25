@@ -1,94 +1,110 @@
-# DockCue
+<p align="center">
+  <img src="assets/hero.svg" alt="DockCue — microphone cues and USB media control for the ASTRO A50 X" width="100%">
+</p>
 
-**A small, local-only Windows companion for the Logitech G ASTRO A50 X.**
+<p align="center">
+  <a href="https://github.com/ugurozdagli/dockcue/releases/latest"><img src="https://img.shields.io/github/v/release/ugurozdagli/dockcue?style=flat-square&amp;color=16848c&amp;label=release" alt="Latest release"></a>
+  <a href="https://github.com/ugurozdagli/dockcue/actions/workflows/windows.yml"><img src="https://github.com/ugurozdagli/dockcue/actions/workflows/windows.yml/badge.svg" alt="Windows build"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-6f829c?style=flat-square" alt="MIT license"></a>
+  <img src="https://img.shields.io/badge/platform-Windows_x64-263c56?style=flat-square" alt="Windows x64">
+</p>
 
-[Download the latest Windows release](https://github.com/ugurozdagli/dockcue/releases/latest) · [Türkçe](README.tr.md) · [Privacy](PRIVACY.md)
+<p align="center">
+  <strong><a href="https://github.com/ugurozdagli/dockcue/releases/latest">Download for Windows</a></strong>
+  &nbsp; · &nbsp; <a href="README.tr.md">Türkçe</a>
+  &nbsp; · &nbsp; <a href="#get-started">Get started</a>
+  &nbsp; · &nbsp; <a href="PRIVACY.md">Privacy</a>
+  &nbsp; · &nbsp; <a href="https://github.com/ugurozdagli/dockcue/issues">Report an issue</a>
+</p>
 
-DockCue adds distinct sounds when you flip the microphone open or muted, and lets
-you use either **Voice** or **Game** as a play/pause button while keeping your USB
-audio connection. It stays in the system tray and shows that the app is running,
-the base's USB connection, battery information, and recent local activity. Battery status includes the last reported charging-dock state.
+# A few useful extras for your A50 X
 
-> This is an independent community support application. It is not an official
-> Logitech application and is not affiliated with Logitech or ASTRO.
-> Created with AI assistance; changes are reviewed and tested before release.
+DockCue is a small Windows companion for the **Logitech G ASTRO A50 X**. Hear a different cue when you open or mute the microphone, and use **Voice or Game** to play or pause media through your existing USB connection. Keep it in the tray and get on with what you were doing.
 
-<details><summary>Earlier interface (1.2.0)</summary>
+> **Independent community application.** Not an official Logitech product and not affiliated with Logitech or ASTRO. Created with AI assistance. No microphone recording, telemetry or remote-control server.
 
-![DockCue 1.2.0 English interface](assets/screenshot-en.png)
+## What you get
+
+| Hear the microphone | Control playback | Keep things simple |
+| :--- | :--- | :--- |
+| Distinct open and mute sounds, adjustable volume, and a preview button. | Choose **Voice** or **Game** for play / pause. The mix returns to center. | Compact window, system tray, optional startup, and English / Turkish UI. |
+
+## Take a look
+
+![Illustrated overview of the compact DockCue 1.2.1 interface](assets/interface-overview.svg)
+
+*Illustrated overview of the current layout, with sample values. Battery and dock information are the base's **last reported** state; they do not prove that the headset is switched on.*
+
+<details>
+<summary>Actual app screenshot — earlier 1.2.0 interface</summary>
+
+The screenshot below shows the previous, larger layout. Version 1.2.1 uses the compact layout described above.
+
+<img src="assets/screenshot-en.png" alt="Actual DockCue 1.2.0 English settings window" width="420">
 
 </details>
 
-Version 1.2.1 uses a compact 420 x 510 window; startup, language and activity are under **Settings & log**.
+## Get started
 
-## Features
+1. **[Download the latest Windows x64 ZIP](https://github.com/ugurozdagli/dockcue/releases/latest)** and extract it into a writable folder you intend to keep.
+2. Run **`DockCue.exe`**. Connect the A50 X base to your PC over USB.
+3. Leave **Logitech G HUB** running for media controls. Play a video once in your browser.
+4. Select **Voice** or **Game** in DockCue, then briefly press that side on the headset.
+5. Open **Settings & log** for startup and language options. Closing the window keeps DockCue running in the tray; use **Quit DockCue** in the tray menu to exit.
 
-- Different microphone-open and microphone-muted cues, with adjustable volume.
-- Choose **Voice** or **Game** for Windows play/pause. The mix returns to center.
-- Close or minimize the window to keep running in the tray. Use **Quit DockCue** to exit.
-- Optional **Start with Windows**, launching directly in the tray.
-- English on non-Turkish Windows; Turkish on Turkish Windows. Manual language selection is available.
-- Uptime, recent events, and a small rotating local log for troubleshooting.
-- No microphone recording, telemetry, update checks, remote-control server, accounts, or cloud dependency.
+**Updating?** Quit the old instance before replacing the executable. Keep `data/` to preserve preferences. If you move the app folder, update its **Start with Windows** setting.
 
-## Install
+The release ZIP is portable and unsigned. `SHA256SUMS.txt` is available on the release page. Public binaries are built by GitHub Actions.
 
-1. Download the Windows x64 ZIP from [Releases](https://github.com/ugurozdagli/dockcue/releases).
-2. Extract it into a writable folder you intend to keep. Run `DockCue.exe`.
-3. Connect the A50 X base to your PC over USB. For media controls, leave **Logitech G HUB** running.
-4. Play a video once in your browser, then briefly press the selected headset button.
-5. To start automatically, enable **Start with Windows**. Do not move the app afterward without updating that option.
+## How it fits your setup
 
-The program uses Windows' active media session, like a keyboard media key. Another
-media app can take that session. Microphone cues use the default Windows audio output.
+![A50 X controls go through the existing USB base to DockCue and local G HUB, then to Windows media playback](assets/how-it-works.svg)
 
-This is an unsigned community build. Release archives include `SHA256SUMS.txt`;
-you can also inspect the source and build the application yourself.
+| With media control on | With media control off |
+| :--- | :--- |
+| The selected Voice / Game direction sends play / pause. Both directions return to center. | Game / Voice adjusts the mix freely. |
+| **Center game / voice** resets the balance without sending a media key. | The center button still works when G HUB is connected. |
 
-## What the connection status means
+Windows chooses the active media session, just as it does for a keyboard media key. Another media app can take that session. The Bluetooth button is not remapped.
 
-The **base remains connected over USB even when the headset is off or charging**.
-This is expected. A USB connection or a battery reading does not prove that the
-headset's radio link is currently active. DockCue labels the base separately and
-treats microphone state as the **last reported** state. Battery information can
-be cached by the station; stale readings disappear if replies stop.
+## Made to stay local
 
-Docking, switching the headset off, or disconnecting USB should not close DockCue.
-The app retries device/G HUB connections. If a worker fails, it is logged and retried.
+- **No audio recording, accounts, telemetry, automatic updates or cloud dependency.**
+- The app is a client of local G HUB at **`127.0.0.1:9010`**. It does not listen on a TCP port.
+- Settings and a small rotating diagnostic log stay in the app's **`data/`** folder.
+- Logs omit raw USB reports, serials, device paths, credentials, audio and personal filesystem paths.
+- Runtime settings, logs and diagnostics are excluded from source control and release archives.
 
-## Media-button behavior and limits
+Read the [privacy details](PRIVACY.md) and [security policy](SECURITY.md).
 
-While media control is enabled, DockCue keeps the Game/Voice mix centered (6 of 12).
-Press **Voice** or **Game**, whichever you selected, to send play/pause. Both directions
-return to center; the other direction sends no media command. **Center game / voice**
-resets the mix without sending play/pause, including when media control is disabled.
+## Compatibility & things to know
 
-- Disable media control to adjust the mix freely in G HUB or with the headset.
-- Changing the mix in G HUB can also trigger media when it moves in the selected direction.
-- Use short presses. Startup, explicit centering and delayed restoration echoes do not send media keys.
-- The Bluetooth button did not emit USB events in the tested setup and is not remapped.
-- Charging-dock status is the base's last report; it does not establish the headset's power/radio state.
+| Item | Status |
+| :--- | :--- |
+| Operating system | Windows x64; live validation on Windows 11 |
+| Headset | ASTRO A50 X, USB `046D:0B0B`, tested firmware `1.3.21` |
+| G HUB | Needed for media controls and mix centering; not needed for microphone cues |
+| Language | Turkish on Turkish Windows, English on other Windows languages; manual override available |
+| Other A50 generations | Not claimed as supported |
 
-## Local files and privacy
+<details>
+<summary>Connection status, mix controls and known limits</summary>
 
-DockCue stores `data/settings.json` and rotating `data/dockcue.log` files beside
-the executable. Logs record app lifecycle and fixed event names, not raw USB
-reports, device serials, microphone audio, credentials, or personal paths.
+- The **base remains connected by USB when the headset is off or charging**. This is normal. Battery readings may be cached; stale readings disappear if replies stop.
+- Microphone and charging-dock status are shown as the last report from the base. They are not a headset power or radio-link indicator.
+- Docking, switching the headset off, or unplugging USB should not close DockCue. It retries device and G HUB connections.
+- Media mode keeps the mix centered at **6 of 12**. Disable it when you want to adjust the mix freely.
+- Dragging the mix in G HUB in the selected direction can also trigger play / pause. Use short headset presses.
+- Startup, explicit centering and delayed restoration echoes are suppressed to avoid extra media commands.
+- The Bluetooth button did not emit USB events in the tested setup.
+- Microphone sounds use the default Windows audio output. Media commands use Windows' active media session.
 
-The only network connection made by the app is a **client connection to
-`127.0.0.1:9010`**, the local G HUB process. It does not listen on any TCP port.
-The address cannot be changed through settings, and proxy variables are bypassed.
-Only the device list and the headset mix endpoint are allowed. See [PRIVACY.md](PRIVACY.md).
+</details>
 
-## Compatibility
+<details>
+<summary>Build from source</summary>
 
-- Windows x64, Python 3.11+ for source builds.
-- ASTRO A50 X base, USB VID/PID `046D:0B0B`; validated with firmware `1.3.21`.
-- Windows 11 was used for live validation. Other firmware versions may need testing.
-- A50 Gen 4 / Gen 5 and other headsets are not claimed as supported.
-- G HUB is required for media-button mix restoration, but not for microphone cues.
-
-## Build and test
+Requires Windows x64 and Python 3.11+.
 
 ```powershell
 python -m venv .venv
@@ -97,12 +113,12 @@ python -m venv .venv
 .venv\Scripts\python tools\build.py
 ```
 
-The portable ZIP, licenses, and checksum are written to `release/`. Public release
-binaries are built by GitHub Actions from this repository, not from a developer's
-private workspace. Runtime logs, settings, personal paths, and diagnostics are
-excluded from both source control and the release ZIP.
+The portable ZIP, dependency licenses and checksum are written to `release/`. Public binaries are built in GitHub Actions from this repository, not from a developer's private workspace. The G HUB address cannot be changed through settings; requests use a narrow endpoint/verb/value allowlist and bypass environment proxies.
 
-## Contributing
+</details>
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-DockCue is licensed under the [MIT License](LICENSE).
+## Help improve DockCue
+
+Found a bug or tested another firmware? [Open an issue](https://github.com/ugurozdagli/dockcue/issues), include the DockCue / Windows / firmware versions and describe how to reproduce it. Review anything you share; avoid posting device identifiers or private files.
+
+[Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md) · [Third-party notices](THIRD_PARTY_NOTICES.md) · [MIT License](LICENSE)
