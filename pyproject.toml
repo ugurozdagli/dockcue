@@ -1,6 +1,6 @@
 [project]
 name = "dockcue"
-version = "1.2.0"
+version = "1.2.1"
 description = "A local-only Windows companion for the ASTRO A50 X"
 readme = "README.md"
 requires-python = ">=3.11"
