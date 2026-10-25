@@ -235,6 +235,13 @@ class App:
         self.settings["language"] = {"English": "en", "Türkçe": "tr"}.get(value, "auto")
         self.language = choose_language(self.settings["language"], windows_ui_language())
         self.persist()
+        # Let the native menu finish its focus/unpost callbacks before replacing
+        # widgets. Destroying them inside the menu callback can raise TclError.
+        self.root.after(350, self.rebuild_language_ui)
+
+    def rebuild_language_ui(self):
+        if self.stop.is_set():
+            return
         self.build_ui()
         if self.tray:
             self.tray.menu = self.tray_menu()
@@ -426,7 +433,9 @@ class App:
                     if self.controller.needs_center(balance):
                         balance = 6
                         ghub_request(ws, path, "SET", {"balance": balance})
-                    self.controller.ready(balance)
+                    # Initial G HUB/HID replies can arrive out of order. Let
+                    # their baseline settle without emitting a media key.
+                    self.controller.ready(balance, settle_seconds=.75)
                 initialize()
                 if reported is not True:
                     self.emit("ghub_ready")

@@ -90,13 +90,15 @@ class MixController:
         self.enabled = True
         self.button = "voice"
         self.last_toggle = -1e9
+        self.armed_at = 0
 
-    def ready(self, balance):
+    def ready(self, balance, settle_seconds=0):
         if not isinstance(balance, int) or not 0 <= balance <= 12:
             raise ValueError("Invalid mix range")
         with self.lock:
             self.reference, self.pending = balance, None
             self.available = True
+            self.armed_at = time.monotonic() + settle_seconds
 
     def unavailable(self):
         with self.lock:
@@ -115,6 +117,9 @@ class MixController:
                     self.notify("restore_timeout")
                 return
             if self.reference is None:
+                self.reference = balance
+                return
+            if time.monotonic() < self.armed_at:
                 self.reference = balance
                 return
             previous = self.reference
